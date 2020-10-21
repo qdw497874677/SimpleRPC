@@ -18,7 +18,9 @@ package com.github.liyue2008.rpc.transport.command;
  * Date: 2019/9/20
  */
 public class Header {
+    // 请求的唯一标示
     private int requestId;
+    // 为了保证可持续可升级，需要有一个版本号字段
     private int version;
     private int type;
 

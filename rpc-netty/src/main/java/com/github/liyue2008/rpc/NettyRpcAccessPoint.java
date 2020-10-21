@@ -13,6 +13,7 @@
  */
 package com.github.liyue2008.rpc;
 
+import com.github.liyue2008.rpc.client.CglibStubFactory;
 import com.github.liyue2008.rpc.client.StubFactory;
 import com.github.liyue2008.rpc.server.RpcRequestHandler;
 import com.github.liyue2008.rpc.server.ServiceProviderRegistry;
@@ -40,8 +41,10 @@ public class NettyRpcAccessPoint implements RpcAccessPoint {
     private final URI uri = URI.create("rpc://" + host + ":" + port);
     private TransportServer server = null;
     private TransportClient client = ServiceSupport.load(TransportClient.class);
+    // 存储url和对应的封装的请求
     private final Map<URI, Transport> clientMap = new ConcurrentHashMap<>();
-    private final StubFactory stubFactory = ServiceSupport.load(StubFactory.class);
+//    private final StubFactory stubFactory = ServiceSupport.load(StubFactory.class);
+    private final StubFactory stubFactory = new CglibStubFactory();
     private final ServiceProviderRegistry serviceProviderRegistry = ServiceSupport.load(ServiceProviderRegistry.class);
 
     @Override

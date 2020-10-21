@@ -34,16 +34,20 @@ public class Client {
         String serviceName = HelloService.class.getCanonicalName();
         File tmpDirFile = new File(System.getProperty("java.io.tmpdir"));
         File file = new File(tmpDirFile, "simple_rpc_name_service.data");
-        String name = "Master MQ";
+//        String name = "Master MQ";
+        String name = "qdw";
         try(RpcAccessPoint rpcAccessPoint = ServiceSupport.load(RpcAccessPoint.class)) {
             NameService nameService = rpcAccessPoint.getNameService(file.toURI());
             assert nameService != null;
             URI uri = nameService.lookupService(serviceName);
             assert uri != null;
             logger.info("找到服务{}，提供者: {}.", serviceName, uri);
+
             HelloService helloService = rpcAccessPoint.getRemoteService(uri, HelloService.class);
+            long start = System.currentTimeMillis();
             logger.info("请求服务, name: {}...", name);
             String response = helloService.hello(name);
+            System.out.println("耗时："+(System.currentTimeMillis()-start));
             logger.info("收到响应: {}.", response);
         }
 

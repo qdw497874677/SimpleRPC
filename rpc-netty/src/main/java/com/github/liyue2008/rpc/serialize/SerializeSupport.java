@@ -62,6 +62,7 @@ public class SerializeSupport {
         byte type = parseEntryType(buffer);
         @SuppressWarnings("unchecked")
         Class<E> eClass = (Class<E> )typeMap.get(type);
+        // 判断一下转换的类型是否匹配
         if(null == eClass) {
             throw new SerializeException(String.format("Unknown entry type: %d!", type));
         } else {

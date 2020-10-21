@@ -36,8 +36,6 @@ public class NettyTransport implements Transport {
     }
 
 
-
-
     @Override
     public  CompletableFuture<Command> send(Command request) {
         // 构建返回值
@@ -54,7 +52,7 @@ public class NettyTransport implements Transport {
                 }
             });
         } catch (Throwable t) {
-            // 处理发送异常
+            // 处理发送异常，对于异常的请求主动将其在在途请求结构中移除
             inFlightRequests.remove(request.getHeader().getRequestId());
             completableFuture.completeExceptionally(t);
         }

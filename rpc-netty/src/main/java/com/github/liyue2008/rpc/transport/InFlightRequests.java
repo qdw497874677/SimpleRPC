@@ -29,11 +29,14 @@ import java.util.concurrent.TimeoutException;
  */
 public class InFlightRequests implements Closeable {
     private final static long TIMEOUT_SEC = 10L;
+    // 信号量提供背压机制
     private final Semaphore semaphore = new Semaphore(10);
+    // 存储所有在途的请求
     private final Map<Integer, ResponseFuture> futureMap = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
     private final ScheduledFuture scheduledFuture;
     public InFlightRequests() {
+        // 开启清除超时请求的定时任务
         scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(this::removeTimeoutFutures, TIMEOUT_SEC, TIMEOUT_SEC, TimeUnit.SECONDS);
     }
 
@@ -44,7 +47,7 @@ public class InFlightRequests implements Closeable {
             throw new TimeoutException();
         }
     }
-
+    // 遍历map，删除超时的请求
     private void removeTimeoutFutures() {
         futureMap.entrySet().removeIf(entry -> {
             if( System.nanoTime() - entry.getValue().getTimestamp() > TIMEOUT_SEC * 1000000000L) {
