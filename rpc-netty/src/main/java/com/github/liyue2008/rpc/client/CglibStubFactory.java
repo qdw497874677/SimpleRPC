@@ -47,7 +47,8 @@ class MyInterceptor0 implements MethodInterceptor{
 
     @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
-        System.out.println("增强0");
+
+//        System.out.println("增强0");
 //        RpcRequest rpcRequest = new RpcRequest(methodProxy.getSuperName(), method.getName(), SerializeSupport.serialize("objects"));
         //System.out.println(aClass.getName()+" "+method.getName()+" "+(String)objects[0]+" "+SerializeSupport.serialize((String)objects[0]));
         RpcRequest rpcRequest = new RpcRequest(aClass.getName(), method.getName(), SerializeSupport.serialize((String)objects[0]));

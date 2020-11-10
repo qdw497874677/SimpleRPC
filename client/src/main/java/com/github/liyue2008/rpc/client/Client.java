@@ -23,6 +23,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author LiYue
@@ -36,19 +39,42 @@ public class Client {
         File file = new File(tmpDirFile, "simple_rpc_name_service.data");
 //        String name = "Master MQ";
         String name = "qdw";
+
         try(RpcAccessPoint rpcAccessPoint = ServiceSupport.load(RpcAccessPoint.class)) {
             NameService nameService = rpcAccessPoint.getNameService(file.toURI());
             assert nameService != null;
             URI uri = nameService.lookupService(serviceName);
             assert uri != null;
             logger.info("找到服务{}，提供者: {}.", serviceName, uri);
-
-            HelloService helloService = rpcAccessPoint.getRemoteService(uri, HelloService.class);
             long start = System.currentTimeMillis();
+            HelloService helloService = rpcAccessPoint.getRemoteService(uri, HelloService.class);
+            long end = System.currentTimeMillis();
+            logger.info("创建实例时间为：{}",(end-start));
+            start = System.currentTimeMillis();
             logger.info("请求服务, name: {}...", name);
-            String response = helloService.hello(name);
+
+            String response;
+            AtomicInteger count = new AtomicInteger();
+            ExecutorService executorService = Executors.newFixedThreadPool(4);
+            long left = System.currentTimeMillis();
+//            do {
+//                executorService.submit(()->{
+//                    String hello = helloService.hello(name);
+//                    System.out.println(hello);
+//                    count.getAndIncrement();
+//                });
+////                response = helloService.hello(name);
+//                count.getAndIncrement();
+//            }while (System.currentTimeMillis()-left<5000);
+//            }while (false);
+
+            response = helloService.hello(name);
+            System.out.println(response);
+            System.out.println("QPS:"+count.get()/5);
+//            executorService.shutdownNow();
+
             System.out.println("耗时："+(System.currentTimeMillis()-start));
-            logger.info("收到响应: {}.", response);
+//            logger.info("收到响应: {}.", response);
         }
 
 

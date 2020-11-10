@@ -36,6 +36,7 @@ import java.util.Map;
 @Singleton
 public class RpcRequestHandler implements RequestHandler, ServiceProviderRegistry {
     private static final Logger logger = LoggerFactory.getLogger(RpcRequestHandler.class);
+    // 存储服务名称和服务提供者的映射
     private Map<String/*service name*/, Object/*service provider*/> serviceProviders = new HashMap<>();
 
     @Override
@@ -45,6 +46,7 @@ public class RpcRequestHandler implements RequestHandler, ServiceProviderRegistr
         RpcRequest rpcRequest = SerializeSupport.parse(requestCommand.getPayload());
         try {
             // 查找所有已注册的服务提供方，寻找rpcRequest中需要的服务
+            System.out.println(rpcRequest.getInterfaceName());
             Object serviceProvider = serviceProviders.get(rpcRequest.getInterfaceName());
             if(serviceProvider != null) {
                 // 找到服务提供者，利用Java反射机制调用服务的对应方法

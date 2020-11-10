@@ -42,6 +42,7 @@ public class NettyTransport implements Transport {
         CompletableFuture<Command> completableFuture = new CompletableFuture<>();
         try {
             // 将在途请求放到inFlightRequests中
+            // 把请求请求结果封装成ResponseFuture，为了方便去管理（比如计算超时，及时清理）
             inFlightRequests.put(new ResponseFuture(request.getHeader().getRequestId(), completableFuture));
             // 发送命令
             channel.writeAndFlush(request).addListener((ChannelFutureListener) channelFuture -> {
